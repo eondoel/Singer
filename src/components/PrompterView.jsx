@@ -73,7 +73,7 @@ export default function PrompterView({ song, onBack, setlists = [], onAddToSetli
           <span key={countdown} className="countdown-number">{countdown}</span>
         </div>
       )}
-      <div className="prompter-header">
+      <div className={`prompter-header ${(running || countdown !== null) ? 'prompter-header--hidden' : ''}`}>
         <button className="btn btn--ghost" onClick={() => { reset(); onBack(); }}>
           <i className="fi fi-rr-arrow-left"></i> Back
         </button>
