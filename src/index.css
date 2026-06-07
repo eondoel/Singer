@@ -521,6 +521,18 @@ body {
   border-bottom: 1px solid var(--border);
   background: var(--bg-2);
   flex-shrink: 0;
+  transition: opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease;
+  max-height: 120px;
+  overflow: hidden;
+}
+
+.prompter-header--hidden {
+  opacity: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  border-bottom-color: transparent;
+  pointer-events: none;
 }
 
 .prompter-title {
