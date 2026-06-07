@@ -134,7 +134,7 @@ export default function PrompterView({ song, onBack, setlists = [], onAddToSetli
             {line.chord && <span className="lyric-chord">{line.chord}</span>}
             {line.text
               ? <span className="lyric-text">{line.text}</span>
-              : <span className="lyric-instrumental"><i className="fi fi-sr-note"></i></span>
+              : <span className="lyric-instrumental"><i className="fi fi-rr-music-note"></i></span>
             }
           </div>
         ))}
