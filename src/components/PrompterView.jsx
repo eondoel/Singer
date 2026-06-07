@@ -159,12 +159,14 @@ export default function PrompterView({ song, onBack, setlists = [], onAddToSetli
           <span className="transport-time">{formatTime(duration)}</span>
         </div>
         <div className="transport-buttons">
-          <button className="btn-transport" onClick={() => { seek(elapsed - 5); }} title="−5s"><i className="fi fi-sr-rewind"></i></button>
           <button className="btn-transport btn-transport--reset" onClick={reset} title="Reset"><i className="fi fi-sr-step-backward"></i></button>
-          <button className="btn-transport btn-transport--play" onClick={togglePlay}>
-            {running ? <i className="fi fi-sr-pause"></i> : <i className="fi fi-sr-play"></i>}
-          </button>
-          <button className="btn-transport" onClick={() => { seek(elapsed + 5); }} title="+5s"><i className="fi fi-sr-forward"></i></button>
+          <div className="transport-buttons-center">
+            <button className="btn-transport" onClick={() => { seek(elapsed - 5); }} title="−5s"><i className="fi fi-sr-rewind"></i></button>
+            <button className="btn-transport btn-transport--play" onClick={togglePlay}>
+              {running ? <i className="fi fi-sr-pause"></i> : <i className="fi fi-sr-play"></i>}
+            </button>
+            <button className="btn-transport" onClick={() => { seek(elapsed + 5); }} title="+5s"><i className="fi fi-sr-forward"></i></button>
+          </div>
         </div>
       </div>
     </div>

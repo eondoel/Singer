@@ -683,9 +683,16 @@ body {
 
 .transport-buttons {
   display: flex;
-  justify-content: center;
   align-items: center;
   gap: 12px;
+}
+
+.transport-buttons-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex: 1;
 }
 
 .btn-transport {
