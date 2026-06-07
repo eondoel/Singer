@@ -80,22 +80,19 @@ export default function App() {
 
   async function addSongToSetlist(setlistId, song) {
     await saveSong(song);
-    setSetlists((prev) => prev.map((sl) => {
-      if (sl.id !== setlistId) return sl;
-      if (sl.songIds.includes(song.id)) return sl;
-      const newIds = [...sl.songIds, song.id];
-      supabase.from('setlists').update({ song_ids: newIds }).eq('id', setlistId);
-      return { ...sl, songIds: newIds };
-    }));
+    const sl = setlists.find((s) => s.id === setlistId);
+    if (!sl || sl.songIds.includes(song.id)) return;
+    const newIds = [...sl.songIds, song.id];
+    setSetlists((prev) => prev.map((s) => s.id === setlistId ? { ...s, songIds: newIds } : s));
+    await supabase.from('setlists').update({ song_ids: newIds }).eq('id', setlistId);
   }
 
   async function removeSongFromSetlist(setlistId, songId) {
-    setSetlists((prev) => prev.map((sl) => {
-      if (sl.id !== setlistId) return sl;
-      const newIds = sl.songIds.filter((id) => id !== songId);
-      supabase.from('setlists').update({ song_ids: newIds }).eq('id', setlistId);
-      return { ...sl, songIds: newIds };
-    }));
+    const sl = setlists.find((s) => s.id === setlistId);
+    if (!sl) return;
+    const newIds = sl.songIds.filter((id) => id !== songId);
+    setSetlists((prev) => prev.map((s) => s.id === setlistId ? { ...s, songIds: newIds } : s));
+    await supabase.from('setlists').update({ song_ids: newIds }).eq('id', setlistId);
   }
 
   async function reorderSetlist(setlistId, newOrder) {
