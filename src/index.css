@@ -1,5 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+.fi { vertical-align: middle; line-height: 1; }
+
 /* Prevent iOS auto-zoom on input focus (requires font-size >= 16px) */
 input, textarea, select {
   font-size: 16px !important;

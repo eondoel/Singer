@@ -75,7 +75,7 @@ export default function PrompterView({ song, onBack, setlists = [], onAddToSetli
       )}
       <div className="prompter-header">
         <button className="btn btn--ghost" onClick={() => { reset(); onBack(); }}>
-          ← Back
+          <i className="fi fi-rr-arrow-left"></i> Back
         </button>
         <div className="prompter-title">
           <span className="prompter-song-title">{song.title}</span>
@@ -86,7 +86,7 @@ export default function PrompterView({ song, onBack, setlists = [], onAddToSetli
                 className="btn btn--small btn--ghost prompter-add-btn"
                 onClick={() => setShowSetlistPicker((v) => !v)}
               >
-                + Set List
+                <i className="fi fi-rr-add"></i> Set List
               </button>
               {showSetlistPicker && (
                 <div className="setlist-picker setlist-picker--centered">
@@ -114,7 +114,7 @@ export default function PrompterView({ song, onBack, setlists = [], onAddToSetli
           onClick={() => setAutoScroll((v) => !v)}
           title="Toggle auto-scroll"
         >
-          {autoScroll ? '⇅ Auto' : '⇅ Manual'}
+          <i className="fi fi-rr-arrows"></i> {autoScroll ? 'Auto' : 'Manual'}
         </button>
       </div>
 
@@ -134,7 +134,7 @@ export default function PrompterView({ song, onBack, setlists = [], onAddToSetli
             {line.chord && <span className="lyric-chord">{line.chord}</span>}
             {line.text
               ? <span className="lyric-text">{line.text}</span>
-              : <span className="lyric-instrumental">♪</span>
+              : <span className="lyric-instrumental"><i className="fi fi-sr-note"></i></span>
             }
           </div>
         ))}
@@ -159,12 +159,12 @@ export default function PrompterView({ song, onBack, setlists = [], onAddToSetli
           <span className="transport-time">{formatTime(duration)}</span>
         </div>
         <div className="transport-buttons">
-          <button className="btn-transport" onClick={() => { seek(elapsed - 5); }} title="−5s">⏪</button>
-          <button className="btn-transport btn-transport--reset" onClick={reset} title="Reset">⏮</button>
+          <button className="btn-transport" onClick={() => { seek(elapsed - 5); }} title="−5s"><i className="fi fi-sr-rewind"></i></button>
+          <button className="btn-transport btn-transport--reset" onClick={reset} title="Reset"><i className="fi fi-sr-step-backward"></i></button>
           <button className="btn-transport btn-transport--play" onClick={togglePlay}>
-            {running ? '⏸' : '▶'}
+            {running ? <i className="fi fi-sr-pause"></i> : <i className="fi fi-sr-play"></i>}
           </button>
-          <button className="btn-transport" onClick={() => { seek(elapsed + 5); }} title="+5s">⏩</button>
+          <button className="btn-transport" onClick={() => { seek(elapsed + 5); }} title="+5s"><i className="fi fi-sr-forward"></i></button>
         </div>
       </div>
     </div>

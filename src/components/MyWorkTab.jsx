@@ -2,7 +2,7 @@ export default function MyWorkTab({ setlists, onOpenSetlist, onDeleteSetlist, on
   return (
     <div className="my-work-tab">
       <div className="my-work-header">
-        <button className="btn btn--primary" onClick={onCreateSetlist}>+ New Set List</button>
+        <button className="btn btn--primary" onClick={onCreateSetlist}><i className="fi fi-rr-add"></i> New Set List</button>
       </div>
 
       {setlists.length === 0 ? (

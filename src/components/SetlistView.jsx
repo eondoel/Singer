@@ -48,7 +48,7 @@ function SortableSongItem({ song, duration, onSelect, onRemove }) {
 
   return (
     <div ref={setNodeRef} style={style} className="song-row sortable-row">
-      <span className="drag-handle" {...attributes} {...listeners}>⠿</span>
+      <span className="drag-handle" {...attributes} {...listeners}><i className="fi fi-sr-grip-dots-vertical"></i></span>
       <div className="song-row-info" onClick={() => onSelect(song)}>
         <span className="song-title">{song.title}</span>
         <span className="song-artist">{song.artist}</span>
@@ -93,7 +93,7 @@ export default function SetlistView({ setlist, songs, onBack, onReorder, onRemov
   return (
     <div className="setlist-view">
       <div className="setlist-header">
-        <button className="btn btn--ghost" onClick={onBack}>← Back</button>
+        <button className="btn btn--ghost" onClick={onBack}><i className="fi fi-rr-arrow-left"></i> Back</button>
         <div className="setlist-title-block">
           <span className="setlist-name">{setlist.name}</span>
           {setlist.event && <span className="setlist-event">{setlist.event}</span>}

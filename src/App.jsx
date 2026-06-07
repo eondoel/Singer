@@ -144,7 +144,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1 className="app-logo">🎤 Setlist</h1>
+        <h1 className="app-logo"><i className="fi fi-sr-microphone"></i> Setlist</h1>
         <div className="tab-bar">
           <button className={`tab-btn ${tab === 'work' ? 'tab-btn--active' : ''}`} onClick={() => setTab('work')}>
             My Work

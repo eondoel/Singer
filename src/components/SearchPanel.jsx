@@ -94,7 +94,7 @@ export default function SearchPanel({ setlists, onSelect, onSave, onAddToSetlist
           placeholder='"Song Title - Artist"'
         />
         <button className="btn btn--primary" type="submit" disabled={loading}>
-          {loading ? '…' : '🔍 Search'}
+          {loading ? '…' : <><i className="fi fi-sr-search"></i> Search</>}
         </button>
       </form>
       <p className="search-hint">Searches LRCLIB for synced lyrics — Enter or tap Search</p>
@@ -104,7 +104,7 @@ export default function SearchPanel({ setlists, onSelect, onSave, onAddToSetlist
 
       {results.length > 0 && (
         <div className="results-section">
-          <p className="results-label">🌐 {results.length} results</p>
+          <p className="results-label"><i className="fi fi-sr-globe"></i> {results.length} results</p>
           {results.map((song) => (
             <div key={song.id} className="song-row song-row--result">
               <div className="song-row-info" onClick={() => onSelect(song)}>
@@ -118,7 +118,7 @@ export default function SearchPanel({ setlists, onSelect, onSave, onAddToSetlist
                     rel="noreferrer"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    🎸 Chords/Tab
+                    <i className="fi fi-sr-guitar"></i> Chords/Tab
                   </a>
                 )}
               </div>
@@ -169,7 +169,7 @@ export default function SearchPanel({ setlists, onSelect, onSave, onAddToSetlist
       {results.length === 0 && !loading && !error && (
         <div className="search-empty-state">
           <p>Search online for any song to get synced lyrics.</p>
-          <p>To add chords, use the <strong>🎸 Chords/Tab</strong> link and add them manually via <strong>+ Add Song</strong>.</p>
+          <p>To add chords, use the <strong><i className="fi fi-sr-guitar"></i> Chords/Tab</strong> link and add them manually via <strong>+ Add Song</strong>.</p>
         </div>
       )}
     </div>
