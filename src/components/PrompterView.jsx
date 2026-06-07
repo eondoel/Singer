@@ -2,13 +2,14 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { parseLRC } from '../utils/parseLRC';
 import { useTimer } from '../hooks/useTimer';
 
-export default function PrompterView({ song, onBack }) {
+export default function PrompterView({ song, onBack, setlists = [], onAddToSetlist }) {
   const lines = parseLRC(song.lrc);
   const duration = lines.length ? lines[lines.length - 1].time + 10 : 300;
 
   const { elapsed, running, play, pause, reset, seek } = useTimer();
   const [autoScroll, setAutoScroll] = useState(false);
   const [countdown, setCountdown] = useState(null); // null | 3 | 2 | 1
+  const [showSetlistPicker, setShowSetlistPicker] = useState(false);
 
   const activeIndex = lines.reduce((acc, line, i) => (line.time <= elapsed ? i : acc), -1);
 
@@ -79,6 +80,34 @@ export default function PrompterView({ song, onBack }) {
         <div className="prompter-title">
           <span className="prompter-song-title">{song.title}</span>
           <span className="prompter-song-artist">{song.artist}</span>
+          {setlists.length > 0 && (
+            <div className="prompter-setlist-picker-wrap">
+              <button
+                className="btn btn--small btn--ghost prompter-add-btn"
+                onClick={() => setShowSetlistPicker((v) => !v)}
+              >
+                + Set List
+              </button>
+              {showSetlistPicker && (
+                <div className="setlist-picker setlist-picker--centered">
+                  <p className="setlist-picker-label">Add to set list</p>
+                  {setlists.map((sl) => (
+                    <button
+                      key={sl.id}
+                      className="setlist-picker-item"
+                      onClick={() => {
+                        onAddToSetlist?.(sl.id, song);
+                        setShowSetlistPicker(false);
+                      }}
+                    >
+                      {sl.name}
+                      {sl.event ? <span className="setlist-picker-sub"> · {sl.event}</span> : null}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <button
           className={`btn btn--ghost ${autoScroll ? 'active' : ''}`}
@@ -98,12 +127,15 @@ export default function PrompterView({ song, onBack }) {
           <div
             key={i}
             ref={(el) => (lineRefs.current[i] = el)}
-            className={`lyric-block ${i === activeIndex ? 'lyric-block--active' : ''} ${i < activeIndex ? 'lyric-block--past' : ''}`}
+            className={`lyric-block ${i === activeIndex ? 'lyric-block--active' : ''} ${i < activeIndex ? 'lyric-block--past' : ''} ${!line.text ? 'lyric-block--instrumental' : ''}`}
             onClick={() => handleLineClick(line.time)}
           >
             <span className="lyric-timestamp">{formatTime(line.time)}</span>
             {line.chord && <span className="lyric-chord">{line.chord}</span>}
-            <span className="lyric-text">{line.text || <>&nbsp;</>}</span>
+            {line.text
+              ? <span className="lyric-text">{line.text}</span>
+              : <span className="lyric-instrumental">♪</span>
+            }
           </div>
         ))}
       </div>
@@ -120,7 +152,9 @@ export default function PrompterView({ song, onBack }) {
             value={Math.min(elapsed, duration)}
             onChange={handleScrub}
             onMouseDown={() => setAutoScroll(false)}
+            onMouseUp={() => setAutoScroll(true)}
             onTouchStart={() => setAutoScroll(false)}
+            onTouchEnd={() => setAutoScroll(true)}
           />
           <span className="transport-time">{formatTime(duration)}</span>
         </div>

@@ -11,11 +11,9 @@ async function fetchLRCLIB(query) {
   return data
     .filter((item) => item.syncedLyrics)
     .sort((a, b) => {
-      // prefer exact artist match
       const artistLower = (artist || '').toLowerCase();
-      const aMatch = a.artistName.toLowerCase() === artistLower ? 0 : 1;
-      const bMatch = b.artistName.toLowerCase() === artistLower ? 0 : 1;
-      return aMatch - bMatch;
+      return (a.artistName.toLowerCase() === artistLower ? 0 : 1) -
+             (b.artistName.toLowerCase() === artistLower ? 0 : 1);
     })
     .filter((item) => {
       const key = `${item.trackName.toLowerCase()}||${item.artistName.toLowerCase()}`;
@@ -50,19 +48,12 @@ async function fetchSongsterr(query) {
   }
 }
 
-export default function SearchPanel({ songs, onSelect, onSave }) {
+export default function SearchPanel({ setlists, onSelect, onSave, onAddToSetlist }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const localFiltered = query.trim()
-    ? songs.filter(
-        (s) =>
-          s.title.toLowerCase().includes(query.toLowerCase()) ||
-          s.artist.toLowerCase().includes(query.toLowerCase())
-      )
-    : songs;
+  const [addingTo, setAddingTo] = useState(null); // song id showing setlist picker
 
   async function handleSearch(e) {
     e.preventDefault();
@@ -70,12 +61,12 @@ export default function SearchPanel({ songs, onSelect, onSave }) {
     setLoading(true);
     setError('');
     setResults([]);
+    setAddingTo(null);
     try {
       const [lrcResults, tabResults] = await Promise.all([
         fetchLRCLIB(query),
         fetchSongsterr(query),
       ]);
-
       const merged = lrcResults.map((song) => {
         const tab = tabResults.find(
           (t) =>
@@ -84,7 +75,6 @@ export default function SearchPanel({ songs, onSelect, onSave }) {
         );
         return { ...song, songsterrUrl: tab?.songsterrUrl || null };
       });
-
       setResults(merged);
       if (merged.length === 0) setError('No synced lyrics found. Try "Title - Artist".');
     } catch {
@@ -104,18 +94,17 @@ export default function SearchPanel({ songs, onSelect, onSave }) {
           placeholder='"Song Title - Artist"'
         />
         <button className="btn btn--primary" type="submit" disabled={loading}>
-          {loading ? '…' : '🔍 Search Online'}
+          {loading ? '…' : '🔍 Search'}
         </button>
       </form>
-      <p className="search-hint">Searches LRCLIB for synced lyrics — press the button or hit Enter</p>
+      <p className="search-hint">Searches LRCLIB for synced lyrics — Enter or tap Search</p>
 
       {error && <p className="search-error">{error}</p>}
-
-      {loading && <p className="search-loading">Searching online…</p>}
+      {loading && <p className="search-loading">Searching…</p>}
 
       {results.length > 0 && (
         <div className="results-section">
-          <p className="results-label">🌐 Online results</p>
+          <p className="results-label">🌐 {results.length} results</p>
           {results.map((song) => (
             <div key={song.id} className="song-row song-row--result">
               <div className="song-row-info" onClick={() => onSelect(song)}>
@@ -129,46 +118,60 @@ export default function SearchPanel({ songs, onSelect, onSave }) {
                     rel="noreferrer"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    🎸 Tab
+                    🎸 Chords/Tab
                   </a>
                 )}
               </div>
-              <div className="song-row-actions">
-                <button
-                  className="btn btn--small"
-                  onClick={(e) => { e.stopPropagation(); onSave(song); }}
-                >
-                  Save
-                </button>
+              <div className="song-row-actions" style={{ flexDirection: 'column', gap: 4 }}>
                 <button
                   className="btn btn--small btn--primary"
                   onClick={() => onSelect(song)}
                 >
                   Open
                 </button>
+                {setlists.length > 0 && (
+                  <div style={{ position: 'relative' }}>
+                    <button
+                      className="btn btn--small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setAddingTo(addingTo === song.id ? null : song.id);
+                      }}
+                    >
+                      + Set List
+                    </button>
+                    {addingTo === song.id && (
+                      <div className="setlist-picker">
+                        {setlists.map((sl) => (
+                          <button
+                            key={sl.id}
+                            className="setlist-picker-item"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSave(song);
+                              onAddToSetlist(sl.id, song);
+                              setAddingTo(null);
+                            }}
+                          >
+                            {sl.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}
         </div>
       )}
 
-      <div className="local-section">
-        <p className="results-label">📂 Your repertoire{query.trim() ? ' — filtered' : ''}</p>
-        {localFiltered.length === 0 && (
-          <p className="empty-state" style={{padding: '16px 0'}}>No matches in your repertoire.</p>
-        )}
-        {localFiltered.map((song) => (
-          <div key={song.id} className="song-row" onClick={() => onSelect(song)}>
-            <div className="song-row-info">
-              <span className="song-title">{song.title}</span>
-              <span className="song-artist">{song.artist}</span>
-            </div>
-            <span className={`source-tag source-tag--${song.source}`}>
-              {song.source === 'local' ? 'saved' : 'search'}
-            </span>
-          </div>
-        ))}
-      </div>
+      {results.length === 0 && !loading && !error && (
+        <div className="search-empty-state">
+          <p>Search online for any song to get synced lyrics.</p>
+          <p>To add chords, use the <strong>🎸 Chords/Tab</strong> link and add them manually via <strong>+ Add Song</strong>.</p>
+        </div>
+      )}
     </div>
   );
 }
